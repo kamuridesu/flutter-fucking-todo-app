@@ -5,7 +5,6 @@ import 'package:my_todo_app/components/item.dart';
 import 'package:my_todo_app/components/snack.dart';
 import 'package:my_todo_app/storage/json.dart';
 
-
 class ItemList extends StatefulWidget {
   final List<Item> items;
   static final JSONFile json = JSONFile();
@@ -28,7 +27,7 @@ class ItemList extends StatefulWidget {
     items.add(item);
     save();
   }
-  
+
   void remove(Item item) {
     items.remove(item);
     save();
@@ -42,7 +41,6 @@ class ItemList extends StatefulWidget {
 }
 
 class _ItemListState extends State<ItemList> {
-
   late List<Item> items;
 
   @override
@@ -58,7 +56,10 @@ class _ItemListState extends State<ItemList> {
       item.finishedAt = item.isFinished ? DateTime.now() : null;
     });
     if (context.mounted) {
-      showSnackBar(context, "Item ${item.name} marked as ${item.isFinished ? "done" : "undone"}!");
+      showSnackBar(
+        context,
+        "'${item.name}' marked as ${item.isFinished ? "done" : "undone"}!",
+      );
     }
     await widget.save();
   }
@@ -66,7 +67,9 @@ class _ItemListState extends State<ItemList> {
   Future<void> editItemDialog(int index) async {
     var item = items[index];
 
-    final TextEditingController controller = TextEditingController(text: item.name);
+    final TextEditingController controller = TextEditingController(
+      text: item.name,
+    );
 
     showDialog(
       context: context,
@@ -85,14 +88,9 @@ class _ItemListState extends State<ItemList> {
                   widget.remove(item);
                 });
                 Navigator.of(context).pop();
-                showSnackBar(context, "Item ${item.name} deleted!");
+                showSnackBar(context, "'${item.name}' deleted!");
               },
-              child: Text(
-                "Delete",
-                style: TextStyle(
-                  color: Colors.red
-                ),
-              ),
+              child: Text("Delete", style: TextStyle(color: Colors.red)),
             ),
             TextButton(
               onPressed: () async {
@@ -102,7 +100,7 @@ class _ItemListState extends State<ItemList> {
                 Navigator.of(context).pop();
                 await widget.save();
                 if (context.mounted) {
-                  showSnackBar(context, "Item ${item.name} Saved!");
+                  showSnackBar(context, "'${item.name}' Saved!");
                 }
               },
               child: Text("Save"),
@@ -115,7 +113,7 @@ class _ItemListState extends State<ItemList> {
             ),
           ],
         );
-      }
+      },
     );
   }
 
@@ -132,5 +130,4 @@ class _ItemListState extends State<ItemList> {
       separatorBuilder: (context, index) => const Divider(),
     );
   }
-
 }

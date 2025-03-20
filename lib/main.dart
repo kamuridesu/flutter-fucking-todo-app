@@ -4,7 +4,10 @@ import "package:my_todo_app/components/snack.dart";
 import "consts/consts.dart" as consts;
 import "components/list.dart";
 
+import "globals.dart";
+
 void main() {
+  // await shared
   runApp(const MyApp());
 }
 
@@ -47,13 +50,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-
-  // void buildItemList() {
-  //   setState(() {
-  //     itemList.build();
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     final textController = TextEditingController();
@@ -63,9 +59,12 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: itemList.items.isEmpty ? Center(child: Text("Create new item"),) : itemList,
+      body:
+          itemList.items.isEmpty
+              ? Center(child: Text("No items available"))
+              : itemList,
       floatingActionButton: FloatingActionButton(
-        onPressed:() {
+        onPressed: () {
           showDialog(
             context: context,
             builder: (context) {
@@ -79,28 +78,29 @@ class _MyHomePageState extends State<MyHomePage> {
                 actions: [
                   TextButton(
                     onPressed: () {
-                      var item = ItemBuilder()
-                      .setName(textController.text)
-                      .setIsFinished(false)
-                      .setCreatedAt(DateTime.now())
-                      .build();
+                      var item =
+                          ItemBuilder()
+                              .setName(textController.text)
+                              .setIsFinished(false)
+                              .setCreatedAt(DateTime.now())
+                              .build();
                       if (!item.isValid()) {
                         showSnackBar(context, "Invalid name!");
-                        return Navigator.of(context).pop();  
+                        return Navigator.of(context).pop();
                       }
                       _addItem(item);
                       Navigator.of(context).pop();
-                      showSnackBar(context, "Item ${item.name} saved!");
+                      showSnackBar(context, "'${item.name}' saved!");
                     },
                     child: Text("Save"),
                   ),
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: Text("Cancel")
+                    child: Text("Cancel"),
                   ),
                 ],
               );
-            }
+            },
           );
         },
         tooltip: 'Add new item',
