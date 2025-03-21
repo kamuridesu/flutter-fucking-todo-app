@@ -28,7 +28,7 @@ class ItemBuilder {
 
   Item build() {
     if (__name == null && __createdAt == null) {
-      throw ErrorDescription("Invalid Item! Missing name and/or creation date");
+      throw Exception("Invalid Item! Missing name and/or creation date");
     }
     var i = Item(name: __name!, createdAt: __createdAt!);
     i.finishedAt = __finishedAt;

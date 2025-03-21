@@ -111,11 +111,9 @@ class _ItemListState extends State<ItemList> {
   List<Item> filter() {
     var localItems =
         (showCompletedOnly ? items.where((s) => s.isFinished).toList() : items);
-    localItems =
-        (searchTerm != ""
-            ? localItems.where((s) => s.name.contains(searchTerm)).toList()
-            : localItems);
-    return localItems;
+    return (searchTerm != ""
+        ? localItems.where((s) => s.name.contains(searchTerm)).toList()
+        : localItems);
   }
 
   @override
