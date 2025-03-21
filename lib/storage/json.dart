@@ -1,31 +1,21 @@
-import 'dart:io';
+import "package:my_todo_app/globals.dart";
 
-import 'package:shared_preferences/shared_preferences.dart';
-
-class JSONFile {
-  File jsonFile = File("todo-app-data.json");
+class Storage {
+  String key = "todo-app-data";
 
   Future<void> save(String data) async {
-    jsonFile.writeAsString(data);
+    await App.localStorage.setString(key, data);
   }
 
-  void saveSync(String data) {
-    jsonFile.writeAsStringSync(data);
+  String read() {
+    var data = App.localStorage.getString(key);
+    if (data == null) {
+      throw Exception("Stored data not found!");
+    }
+    return data;
   }
 
-  Future<String> read() async {
-    return jsonFile.readAsString();
-  }
-
-  String readSync() {
-    return jsonFile.readAsStringSync();
-  }
-
-  Future<bool> exists() async {
-    return jsonFile.exists();
-  }
-
-  bool existsSync() {
-    return jsonFile.existsSync();
+  bool exists() {
+    return App.localStorage.getKeys().contains(key);
   }
 }

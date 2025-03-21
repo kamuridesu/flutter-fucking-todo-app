@@ -1,34 +1,25 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:my_todo_app/components/buttons.dart';
 import 'package:my_todo_app/components/item.dart';
 import 'package:my_todo_app/components/snack.dart';
 import 'package:my_todo_app/storage/json.dart';
 
 class ItemList extends StatefulWidget {
   final List<Item> items;
-  static final JSONFile json = JSONFile();
+  static final Storage storage = Storage();
 
   const ItemList({super.key, required this.items});
 
   @override
   State<ItemList> createState() => _ItemListState();
 
-  static Future<ItemList> load() async {
-    if (!json.existsSync()) {
+  static ItemList load() {
+    if (!storage.exists()) {
       return ItemList(items: []);
     }
-    var input = await json.read();
-    List<dynamic> data = jsonDecode(input);
-    return ItemList(items: data.map((e) => Item.fromJson(e)).toList());
-  }
-
-  static ItemList loadSync() {
-    if (!json.existsSync()) {
-      return ItemList(items: []);
-    }
-    var input = json.readSync();
-    List<dynamic> data = jsonDecode(input);
+    List<dynamic> data = jsonDecode(storage.read());
     return ItemList(items: data.map((e) => Item.fromJson(e)).toList());
   }
 
@@ -45,12 +36,14 @@ class ItemList extends StatefulWidget {
   Future<void> save() async {
     var jsonItems = items.map((e) => e.toJson()).toList();
     var data = jsonEncode(jsonItems);
-    await json.save(data);
+    await storage.save(data);
   }
 }
 
 class _ItemListState extends State<ItemList> {
   late List<Item> items;
+  var showCompletedOnly = false;
+  var searchTerm = "";
 
   @override
   void initState() {
@@ -101,42 +94,86 @@ class _ItemListState extends State<ItemList> {
               },
               child: Text("Delete", style: TextStyle(color: Colors.red)),
             ),
-            TextButton(
-              onPressed: () async {
-                setState(() {
-                  item.name = controller.text;
-                });
-                Navigator.of(context).pop();
-                await widget.save();
-                if (context.mounted) {
-                  showSnackBar(context, "'${item.name}' Saved!");
-                }
-              },
-              child: Text("Save"),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("Cancel"),
-            ),
+            saveButton(context, () async {
+              setState(() {
+                item.name = controller.text;
+              });
+              Navigator.of(context).pop();
+              await widget.save();
+              if (context.mounted) {
+                showSnackBar(context, "'${item.name}' Saved!");
+              }
+            }),
+            cancelButton(context),
           ],
         );
       },
     );
   }
 
+  List<Item> filter() {
+    var localItems =
+        (showCompletedOnly ? items.where((s) => s.isFinished).toList() : items);
+    localItems =
+        (searchTerm != ""
+            ? localItems.where((s) => s.name.contains(searchTerm)).toList()
+            : localItems);
+    return localItems;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      itemCount: items.length,
+    var localItems = filter();
+    var list = ListView.separated(
+      itemCount: localItems.length,
       itemBuilder: (context, index) {
-        return items[index].build(
+        return localItems[index].build(
           () => toggleItemStatus(index),
           () => editItemDialog(index),
         );
       },
       separatorBuilder: (context, index) => const Divider(),
     );
+    var row = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      spacing: 20,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(),
+          child: Row(
+            children: [
+              Tooltip(
+                message: "Show completed only",
+                child: Switch(
+                  value: showCompletedOnly,
+                  onChanged: ((value) {
+                    setState(() {
+                      showCompletedOnly = value;
+                    });
+                  }),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: TextField(
+            decoration: InputDecoration(
+              labelText: "Search",
+              suffixIcon: Icon(Icons.search),
+            ),
+            autofocus: true,
+            onChanged: (value) {
+              setState(() {
+                searchTerm = value;
+              });
+            },
+          ),
+        ),
+      ],
+    );
+    // final searchController = TextEditingController();
+    return Column(children: [row, Expanded(child: list)]);
   }
 }
