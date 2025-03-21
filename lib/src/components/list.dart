@@ -158,7 +158,6 @@ class _ItemListState extends State<ItemList> {
               labelText: "Search",
               suffixIcon: Icon(Icons.search),
             ),
-            autofocus: true,
             onChanged: (value) {
               setState(() {
                 searchTerm = value;
@@ -168,7 +167,6 @@ class _ItemListState extends State<ItemList> {
         ),
       ],
     );
-    // final searchController = TextEditingController();
     return Column(children: [row, Expanded(child: list)]);
   }
 }
