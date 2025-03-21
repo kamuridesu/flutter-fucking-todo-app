@@ -1,30 +1,44 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:my_todo_app/globals.dart';
 
 import 'package:my_todo_app/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+void main() async {
+  SharedPreferences.setMockInitialValues({});
+  await App.init();
+
+  testWidgets('Main test', (WidgetTester tester) async {
     await tester.pumpWidget(const MyApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('Mock Item'), findsNothing);
 
-    // Tap the '+' icon and trigger a frame.
     await tester.tap(find.byIcon(Icons.add));
     await tester.pump();
+    await tester.enterText(
+      find.widgetWithText(TextField, "Item Name"),
+      "Mock Item",
+    );
+    await tester.tap(find.widgetWithText(TextButton, "Save"));
+    await tester.pump();
+    expect(find.text('Mock Item'), findsAtLeast(1));
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    var mockItem = find.widgetWithText(ListTile, "Mock Item");
+    await tester.tap(find.byType(Switch));
+    expect(mockItem, findsOneWidget);
+    await tester.tap(mockItem);
+    expect(mockItem, findsAny);
+
+    await tester.longPress(mockItem);
+    await tester.pump();
+
+    await tester.enterText(
+      find.widgetWithText(TextField, "Item Name"),
+      "New Mock Item",
+    );
+    await tester.tap(find.widgetWithText(TextButton, "Save"));
+    await tester.pump();
+    expect(find.text("New Mock Item"), findsAtLeast(1));
   });
 }
