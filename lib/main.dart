@@ -6,7 +6,7 @@ import "components/list.dart";
 
 import "globals.dart";
 
-void main() {
+void main() async {
   // await shared
   runApp(const MyApp());
 }
@@ -40,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    itemList = ItemList.load();
+    itemList = ItemList.loadSync();
   }
 
   void _addItem(Item item) {

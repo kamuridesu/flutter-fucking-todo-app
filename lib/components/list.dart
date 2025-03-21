@@ -14,7 +14,16 @@ class ItemList extends StatefulWidget {
   @override
   State<ItemList> createState() => _ItemListState();
 
-  static ItemList load() {
+  static Future<ItemList> load() async {
+    if (!json.existsSync()) {
+      return ItemList(items: []);
+    }
+    var input = await json.read();
+    List<dynamic> data = jsonDecode(input);
+    return ItemList(items: data.map((e) => Item.fromJson(e)).toList());
+  }
+
+  static ItemList loadSync() {
     if (!json.existsSync()) {
       return ItemList(items: []);
     }
