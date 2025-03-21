@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:my_todo_app/components/buttons.dart';
-import 'package:my_todo_app/components/item.dart';
-import 'package:my_todo_app/components/snack.dart';
-import 'package:my_todo_app/storage/json.dart';
+import 'package:my_todo_app/src/components/buttons.dart';
+import 'package:my_todo_app/src/components/item.dart';
+import 'package:my_todo_app/src/components/snack.dart';
+import 'package:my_todo_app/src/storage/json.dart';
 
 class ItemList extends StatefulWidget {
   final List<Item> items;

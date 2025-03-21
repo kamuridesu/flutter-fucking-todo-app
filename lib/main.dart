@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import "package:my_todo_app/components/buttons.dart";
-import "package:my_todo_app/components/item.dart";
-import "package:my_todo_app/components/snack.dart";
-import "consts/consts.dart" as consts;
-import "components/list.dart";
+import "package:my_todo_app/src/components/buttons.dart";
+import "package:my_todo_app/src/components/item.dart";
+import "package:my_todo_app/src/components/snack.dart";
+import "src/consts/consts.dart" as consts;
+import "src/components/list.dart";
 
 import "globals.dart";
 
