@@ -51,8 +51,7 @@ class _ItemListState extends State<ItemList> {
     items = widget.items;
   }
 
-  Future<void> toggleItemStatus(int index) async {
-    var item = items[index];
+  Future<void> toggleItemStatus(Item item) async {
     setState(() {
       item.isFinished = !item.isFinished;
       item.finishedAt = item.isFinished ? DateTime.now() : null;
@@ -66,9 +65,7 @@ class _ItemListState extends State<ItemList> {
     await widget.save();
   }
 
-  Future<void> editItemDialog(int index) async {
-    var item = items[index];
-
+  Future<void> editItemDialog(Item item) async {
     final TextEditingController controller = TextEditingController(
       text: item.name,
     );
@@ -128,8 +125,8 @@ class _ItemListState extends State<ItemList> {
       itemCount: localItems.length,
       itemBuilder: (context, index) {
         return localItems[index].build(
-          () => toggleItemStatus(index),
-          () => editItemDialog(index),
+          () => toggleItemStatus(localItems[index]),
+          () => editItemDialog(localItems[index]),
         );
       },
       separatorBuilder: (context, index) => const Divider(),
